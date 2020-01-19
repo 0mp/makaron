@@ -1,5 +1,3 @@
-RNT=	./rnt/run-tests.sh
-
 check: ansible .WAIT kyua
 
 ansible: .PHONY
