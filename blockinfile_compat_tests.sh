@@ -49,12 +49,20 @@ EOF
 }
 
 atf_test_case backup
-backup_block_head() { atf_set "descr" "Test "; }
+backup_block_head() { atf_set "descr" "Test the backup parameter support"; }
 backup_body() {
 	set_up
 	atf_check "$cmd" --backup yes --block "inserted line" --path "$file"
 	atf_check -o "match:$file.[1-9][0-9]*.20[0-9][0-9].[01][0-9].[0-3][0-9]@[0-2][0-9]:[0-5][0-9]:[0-5][0-9]~" \
 		find "$(atf_get_srcdir)" -path "${file}.*~"
+	verify
+}
+
+atf_test_case marker
+marker_head() { atf_set "descr" "Test the marker parameter support"; }
+marker_body() {
+	set_up
+	atf_check "$cmd" --block "inserted line" --marker "# {mark} CUSTOM MARKER" --path "$file"
 	verify
 }
 
@@ -67,4 +75,5 @@ atf_init_test_cases()
 	atf_add_test_case nested_block_update_logic
 	atf_add_test_case multiline_block
 	atf_add_test_case backup
+	atf_add_test_case marker
 }

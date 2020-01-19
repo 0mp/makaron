@@ -82,6 +82,9 @@ main() {
 		( --block | --content )
 			_block_flag="$2"
 			;;
+		( --marker )
+			_marker_flag="$2"
+			;;
 		( --path | --dest | --destfile | --name )
 			_path_flag="$2"
 			;;

@@ -59,3 +59,13 @@
             marker: "{{ default_marker }}"
             block: inserted line
             backup: yes
+
+    - name: Test case
+      vars:
+        test_name: "marker"
+      block:
+      - name: "{{ test_name }}"
+        blockinfile:
+            path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+            marker: "# {mark} CUSTOM MARKER"
+            block: inserted line
