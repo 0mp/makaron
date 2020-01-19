@@ -1,0 +1,159 @@
+#! /bin/sh -
+
+# Constants
+__NO="no"
+__YES="yes"
+__EOF="EOF"
+__MARK="{mark}"
+__DEFAULT_MARKER="# ${__MARK} MAKARON MANAGED BLOCK"
+__MARKER_BEGIN="BEGIN"
+__MARKER_END="END"
+__PRESERVE="preserve"
+__STATE_ABSENT="absent"
+__STATE_PRESENT="present"
+
+__EX_USAGE="64"
+
+warn() {
+	local _return_code
+
+	_return_code="$1"
+	shift
+
+	printf 'WARNING: %s\n' "$*" >&2
+}
+
+err() {
+	local _return_code
+
+	_return_code="$1"
+	shift
+
+	printf 'ERROR: %s\n' "$*" >&2
+	exit "$_return_code"
+}
+
+warn_option_not_implemented() {
+	warn "Option not implemented: $*"
+}
+
+flag_requires_value() {
+	if [ "$#" -lt 2 ]; then
+		err "$__EX_USAGE" "Flag \"$1\" requires a value"
+	fi
+}
+
+main() {
+	local _attributes_flag
+	local _backup_flag
+	local _block_flag
+	local _create_flag
+	local _group_flag
+	local _insertafter_flag
+	local _insertbefore_flag
+	local _marker_flag
+	local _marker_begin_flag
+	local _marker_end_flag
+	local _mode_flag
+	local _owner_flag
+	local _path_flag local _state_flag
+	local _unsafe_writes_flag
+	local _validate_flag
+
+	# Set the defaults
+	_backup_flag="$__NO"
+	_create_flag="$__NO"
+	_insert_after="$__EOF"
+	_marker_flag="$__DEFAULT_MARKER"
+	_marker_begin_flag="$__MARKER_BEGIN"
+	_marker_end_flag="$__MARKER_END"
+	_mode_flag="$__PRESERVE"
+	_state_flag="$__STATE_PRESENT"
+
+	while [ "$#" -gt 0 ]; do
+		flag_requires_value "$@"
+		case $1 in
+		( --attributes | --attr )
+			warn_option_not_implemented "$1 $2"
+			;;
+		( --backup )
+			_backup_flag="$2"
+			;;
+		( --block | --content )
+			_block_flag="$2"
+			;;
+		( --path | --dest | --destfile | --name )
+			_path_flag="$2"
+			;;
+		esac
+		shift 2
+	done
+
+	if [ -z "$_path_flag" ]; then
+		err "$__EX_USAGE" "Path has to be specified"
+	fi
+
+	local _marker_begin
+	_marker_begin="$(printf "%s\n" "$_marker_flag" |
+		awk -v mark="$_marker_begin_flag" '{sub("{mark}", mark); print}' )"
+	local _marker_end
+	_marker_end="$(printf "%s\n" "$_marker_flag" |
+		awk -v mark="$_marker_end_flag" '{sub("{mark}", mark); print}' )"
+
+	local _begin_line
+	_begin_line="$(awk -v marker="$_marker_begin" '$0 == marker {line = FNR} END {print line}' "$_path_flag")" || err 69 XXX
+
+	local _end_line
+	_end_line="$(awk -v marker="$_marker_end" '$0 == marker {line = FNR} END {print line}' "$_path_flag")" || err 69 XXX
+
+	local _dir
+	_dir="$(dirname -- "$_path_flag")" || err 69 XXX
+	local _tmp_path
+	_tmp_path="$(TMPDIR="$_dir" mktemp)" || err 69 XXX
+
+	local _backup_suffix
+	_backup_suffix="$(date +.$$.%Y-%m-%d@%H:%M:%S~)" || err 69 XXX
+	if [ "$_backup_flag" = "$__YES" ]; then
+		cp -p -- "$_path_flag" "${_path_flag}${_backup_suffix}"
+	fi
+
+	if [ -z "$_begin_line" ] || [ -z "$_end_line" ]; then
+		cp -p -- "$_path_flag" "$_tmp_path"
+		# Do not add an empty block.
+		if [ -n "$_block_flag" ]; then
+			printf "%s\n" "${_marker_begin}" "${_block_flag}" "${_marker_end}" >> "$_tmp_path"
+		fi
+	else
+		# XXX: What if _path_flag == "-"?
+		printf "%s\n" "$_block_flag" | awk -v begin_line="$_begin_line" -v end_line="$_end_line" '
+		BEGIN {
+			inside_block = "no"
+		}
+		FILENAME == "-" {
+			block[FNR] = $0
+			block_size = FNR
+			next
+		}
+		begin_line == FNR {
+			print
+			for (ii = 1; ii <= block_size; ii++)
+				print block[ii]
+			inside_block = "yes"
+			next
+		}
+		end_line == FNR {
+			inside_block = "no"
+			print
+			next
+		}
+		inside_block == "no" {
+			print
+		}
+		' - "$_path_flag" > "$_tmp_path"
+	fi
+	mv --  "$_tmp_path" "$_path_flag"
+
+	return 0
+}
+
+main "$@"

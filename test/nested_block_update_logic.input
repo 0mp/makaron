@@ -1,0 +1,8 @@
+// Nested block case:
+# BEGIN MAKARON MANAGED BLOCK
+outter block
+# BEGIN MAKARON MANAGED BLOCK
+inner block
+# END MAKARON MANAGED BLOCK
+outter block
+# END MAKARON MANAGED BLOCK

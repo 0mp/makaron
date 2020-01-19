@@ -1,0 +1,61 @@
+---
+- name: Run blockinfile over test cases to generate expected outputs
+  hosts: localhost
+  vars:
+    test_path: "./test"
+    suffix: ".expected"
+    default_marker: "# {mark} MAKARON MANAGED BLOCK"
+
+  tasks:
+    - name: Test case
+      vars:
+        test_name: "no_op"
+      block:
+      - name: "{{ test_name }}"
+        blockinfile:
+            path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+
+    - name: Test case
+      vars:
+        test_name: "new_block_insertion"
+      block:
+      - name: "{{ test_name }}"
+        blockinfile:
+            path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+            marker: "{{ default_marker }}"
+            block: inserted block
+
+    - name: Test case
+      vars:
+        test_name: "nested_block_update_logic"
+      block:
+      - name: "{{ test_name }}"
+        blockinfile:
+            path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+            marker: "{{ default_marker }}"
+            block: modified block
+
+    - name: Test case
+      vars:
+        test_name: "multiline_block"
+      block:
+      - name: "{{ test_name }}"
+        blockinfile:
+            path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+            marker: "{{ default_marker }}"
+            block: |
+
+              line 2
+
+              line 4
+
+    - name: Test case
+      vars:
+        test_name: "backup"
+      block:
+      - name: "{{ test_name }}"
+        blockinfile:
+            path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+            marker: "{{ default_marker }}"
+            block: inserted line
+            backup: yes
