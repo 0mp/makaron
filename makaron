@@ -154,7 +154,8 @@ main() {
 		}
 		' - "$_path_flag" > "$_tmp_path"
 	fi
-	mv --  "$_tmp_path" "$_path_flag"
+	cat -- "$_tmp_path" > "$_path_flag"
+	unlink "$_tmp_path"
 
 	return 0
 }

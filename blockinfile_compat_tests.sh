@@ -66,6 +66,16 @@ marker_body() {
 	verify
 }
 
+atf_test_case mode_and_ownership_preservation
+mode_and_ownership_preservation_head() { atf_set "descr" "Test the file mode, owner, and group preservation"; }
+mode_and_ownership_preservation_body() {
+	set_up
+	atf_check -o save:stat.expected stat -f "%Sp %u %g" "$expected"
+	atf_check "$cmd" --block "inserted line" --path "$file"
+	atf_check -o save:stat.actual stat -f "%Sp %u %g" "$file"
+	atf_check diff stat.expected stat.actual
+}
+
 atf_init_test_cases()
 {
 	cmd="$(atf_get_srcdir)/makaron"
@@ -76,4 +86,5 @@ atf_init_test_cases()
 	atf_add_test_case multiline_block
 	atf_add_test_case backup
 	atf_add_test_case marker
+	atf_add_test_case mode_and_ownership_preservation
 }

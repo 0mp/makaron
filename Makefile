@@ -15,5 +15,5 @@ ci: .PHONY
 
 clean: .PHONY
 	find test -name '*.expected' -print -delete
-	find test -name 'tmp.*' -print -delete
+	find . -name 'tmp.*' -print -delete
 	find test -name '*~' -print -delete

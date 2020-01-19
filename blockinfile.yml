@@ -69,3 +69,12 @@
             path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
             marker: "# {mark} CUSTOM MARKER"
             block: inserted line
+
+    - name: Test case
+      vars:
+        test_name: "mode_and_ownership_preservation"
+      block:
+      - name: "{{ test_name }}"
+        blockinfile:
+            path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+            block: inserted line
