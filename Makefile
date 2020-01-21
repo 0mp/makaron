@@ -1,4 +1,4 @@
-check: ansible .WAIT kyua
+check: clean .WAIT ansible .WAIT kyua
 
 ansible: .PHONY
 	find test -name '*.input' -exec sh -c 'cp -a $$1 $${1%.input}.expected' _ {} \;
@@ -16,3 +16,5 @@ clean: .PHONY
 	find test -name '*.expected' -print -delete
 	find . -name 'tmp.*' -print -delete
 	find test -name '*~' -print -delete
+	find test -name 'create_path' -delete
+	find test -name '*.actual' -delete
