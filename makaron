@@ -81,11 +81,11 @@ main() {
 		( --backup )
 			_backup_flag="$2"
 			;;
-		( --create )
-			_create_flag="$2"
-			;;
 		( --block | --content )
 			_block_flag="$2"
+			;;
+		( --create )
+			_create_flag="$2"
 			;;
 		( --marker )
 			_marker_flag="$2"
