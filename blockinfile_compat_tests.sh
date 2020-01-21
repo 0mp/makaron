@@ -76,6 +76,16 @@ mode_and_ownership_preservation_body() {
 	atf_check diff stat.expected stat.actual
 }
 
+atf_test_case create_file
+create_file_head() { atf_set "descr" "Test the create parameter support for files"; }
+create_file_body() {
+	set_up
+	atf_check -o save:stat.expected stat -f "%Sp %u %g" "$expected"
+	atf_check "$cmd" --block "inserted line" --create yes --path "$file"
+	atf_check -o save:stat.actual stat -f "%Sp %u %g" "$file"
+	atf_check diff stat.expected stat.actual
+}
+
 atf_test_case backslashes_in_marker
 backslashes_in_marker_head() { atf_set "descr" "Test proper handling of backslashes in markers"; }
 backslashes_in_marker_body() {
@@ -97,5 +107,6 @@ atf_init_test_cases()
 	atf_add_test_case backup
 	atf_add_test_case marker
 	atf_add_test_case mode_and_ownership_preservation
+	atf_add_test_case create_file
 	atf_add_test_case backslashes_in_marker
 }

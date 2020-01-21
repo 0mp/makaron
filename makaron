@@ -13,6 +13,7 @@ __STATE_ABSENT="absent"
 __STATE_PRESENT="present"
 
 __EX_USAGE="64"
+__EX_NOINPUT="66"
 
 warn() {
 	local _return_code
@@ -79,6 +80,9 @@ main() {
 		( --backup )
 			_backup_flag="$2"
 			;;
+		( --create )
+			_create_flag="$2"
+			;;
 		( --block | --content )
 			_block_flag="$2"
 			;;
@@ -102,6 +106,15 @@ main() {
 	local _marker_end
 	_marker_end="$(printf "%s\n" "$_marker_flag" |
 		awk -v mark="$_marker_end_flag" '{sub("{mark}", mark); print}' )"
+
+	if [ ! -r "$_path_flag" ]; then
+		if [ "$_create_flag" = "$__YES" ]; then
+			: >> "$_path_flag"
+		else
+			err "$__EX_NOINPUT" \
+				"File \"${_path_flag}\" does not exist or is not readable"
+		fi
+	fi
 
 	local _begin_line
 	_begin_line="$(

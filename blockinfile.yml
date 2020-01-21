@@ -81,6 +81,16 @@
 
     - name: Test case
       vars:
+        test_name: "create_file"
+      block:
+      - name: "{{ test_name }}"
+        blockinfile:
+            path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+            block: inserted line
+            create: yes
+
+    - name: Test case
+      vars:
         test_name: "backslashes_in_marker"
       block:
       - name: "{{ test_name }}"
