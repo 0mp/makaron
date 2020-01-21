@@ -14,6 +14,7 @@ __STATE_PRESENT="present"
 
 __EX_USAGE="64"
 __EX_NOINPUT="66"
+__EX_SOFTWARE="70"
 
 warn() {
 	local _return_code
@@ -107,8 +108,13 @@ main() {
 	_marker_end="$(printf "%s\n" "$_marker_flag" |
 		awk -v mark="$_marker_end_flag" '{sub("{mark}", mark); print}' )"
 
+	local _dir
+	_dir="$(dirname -- "$_path_flag")" || err 69 XXX
+
 	if [ ! -r "$_path_flag" ]; then
 		if [ "$_create_flag" = "$__YES" ]; then
+			mkdir -p -- "$_dir" ||
+				err "$__EX_SOFTWARE" "Could not create directories leading to \"${_path_flag}\""
 			: >> "$_path_flag"
 		else
 			err "$__EX_NOINPUT" \
@@ -128,8 +134,6 @@ main() {
 		awk -v marker="$_escaped_marker" '$0 == marker {line = FNR} END {print line}' "$_path_flag"
 	)" || err 69 XXX
 
-	local _dir
-	_dir="$(dirname -- "$_path_flag")" || err 69 XXX
 	local _tmp_path
 	_tmp_path="$(TMPDIR="$_dir" mktemp)" || err 69 XXX
 
