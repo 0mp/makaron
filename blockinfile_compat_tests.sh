@@ -76,6 +76,16 @@ mode_and_ownership_preservation_body() {
 	atf_check diff stat.expected stat.actual
 }
 
+atf_test_case backslashes_in_marker
+backslashes_in_marker_head() { atf_set "descr" "Test proper handling of backslashes in markers"; }
+backslashes_in_marker_body() {
+	marker='# {mark} \#{}'
+	set_up
+	atf_check "$cmd" --block "modified line" --path "$file" --marker "$marker"
+	atf_check "$cmd" --block "modified line" --path "$file" --marker "$marker"
+	verify
+}
+
 atf_init_test_cases()
 {
 	cmd="$(atf_get_srcdir)/makaron"
@@ -87,4 +97,5 @@ atf_init_test_cases()
 	atf_add_test_case backup
 	atf_add_test_case marker
 	atf_add_test_case mode_and_ownership_preservation
+	atf_add_test_case backslashes_in_marker
 }

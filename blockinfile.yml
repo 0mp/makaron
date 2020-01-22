@@ -78,3 +78,22 @@
         blockinfile:
             path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
             block: inserted line
+
+    - name: Test case
+      vars:
+        test_name: "backslashes_in_marker"
+      block:
+      - name: "{{ test_name }}"
+        block:
+          - name: "{{ test_name }} - first run"
+            blockinfile:
+                path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+                marker: '# {mark} \#{}'
+                block: |
+                  modified line
+          - name: "{{ test_name }} - second run"
+            blockinfile:
+                path: "{{ test_path }}/{{ test_name }}{{ suffix }}"
+                marker: '# {mark} \#{}'
+                block: |
+                  modified line

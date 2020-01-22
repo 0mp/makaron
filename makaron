@@ -104,10 +104,16 @@ main() {
 		awk -v mark="$_marker_end_flag" '{sub("{mark}", mark); print}' )"
 
 	local _begin_line
-	_begin_line="$(awk -v marker="$_marker_begin" '$0 == marker {line = FNR} END {print line}' "$_path_flag")" || err 69 XXX
+	_begin_line="$(
+		_escaped_marker="$(printf "%s\n" "$_marker_begin" | sed 's,\\,\\\\,g')"
+		awk -v marker="$_escaped_marker" '$0 == marker {line = FNR} END {print line}' "$_path_flag"
+	)" || err 69 XXX
 
 	local _end_line
-	_end_line="$(awk -v marker="$_marker_end" '$0 == marker {line = FNR} END {print line}' "$_path_flag")" || err 69 XXX
+	_end_line="$(
+		_escaped_marker="$(printf "%s\n" "$_marker_end" | sed 's,\\,\\\\,g')"
+		awk -v marker="$_escaped_marker" '$0 == marker {line = FNR} END {print line}' "$_path_flag"
+	)" || err 69 XXX
 
 	local _dir
 	_dir="$(dirname -- "$_path_flag")" || err 69 XXX
