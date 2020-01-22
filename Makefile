@@ -12,6 +12,7 @@ ci: .PHONY
 	while :; do find . | entr -c -d -s "make kyua" || [ $$? -eq 0 ] && break; done
 
 clean: .PHONY
+	find test -name '*.actual' -print -delete
 	find test -name '*.expected' -print -delete
 	find . -name 'tmp.*' -print -delete
 	find test -name '*~' -print -delete
