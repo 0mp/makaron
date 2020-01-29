@@ -46,6 +46,7 @@ flag_requires_value() {
 }
 
 main() {
+	# Flags compatible with Ansible blockinfile.
 	local _attributes_flag
 	local _backup_flag
 	local _block_flag
@@ -62,9 +63,13 @@ main() {
 	local _unsafe_writes_flag
 	local _validate_flag
 
+	# Custom flags.
+	local _in_flag
+
 	# Set the defaults
 	_backup_flag="$__NO"
 	_create_flag="$__NO"
+	_in_flag="$__NO"
 	_insert_after="$__EOF"
 	_marker_flag="$__DEFAULT_MARKER"
 	_marker_begin_flag="$__MARKER_BEGIN"
@@ -73,28 +78,42 @@ main() {
 	_state_flag="$__STATE_PRESENT"
 
 	while [ "$#" -gt 0 ]; do
-		flag_requires_value "$@"
 		case $1 in
 		( --attributes | --attr )
+			flag_requires_value "$@"
 			warn_option_not_implemented "$1 $2"
+			shift 2
 			;;
 		( --backup )
+			flag_requires_value "$@"
 			_backup_flag="$2"
+			shift 2
 			;;
 		( --block | --content )
+			flag_requires_value "$@"
 			_block_flag="$2"
+			shift 2
 			;;
 		( --create )
+			flag_requires_value "$@"
 			_create_flag="$2"
+			shift 2
+			;;
+		( --in )
+			_in_flag="$__YES"
+			shift
 			;;
 		( --marker )
+			flag_requires_value "$@"
 			_marker_flag="$2"
+			shift 2
 			;;
 		( --path | --dest | --destfile | --name )
+			flag_requires_value "$@"
 			_path_flag="$2"
+			shift 2
 			;;
 		esac
-		shift 2
 	done
 
 	if [ -z "$_path_flag" ]; then
@@ -147,11 +166,23 @@ main() {
 		cp -p -- "$_path_flag" "$_tmp_path"
 		# Do not add an empty block.
 		if [ -n "$_block_flag" ]; then
-			printf "%s\n" "${_marker_begin}" "${_block_flag}" "${_marker_end}" >> "$_tmp_path"
+			printf "%s\n" "${_marker_begin}" "${_block_flag}" \
+				"${_marker_end}" >> "$_tmp_path"
+		elif [ "$_in_flag" = "$__YES" ]
+		then {
+			# XXX: There is no check if the block is empty or not.
+			printf "%s\n" "${_marker_begin}"
+			cat
+			printf "%s\n" "${_marker_end}"
+		} >> "$_tmp_path"
 		fi
 	else
 		# XXX: What if _path_flag == "-"?
-		printf "%s\n" "$_block_flag" | awk -v begin_line="$_begin_line" -v end_line="$_end_line" '
+		if [ "$_in_flag" = "$__YES" ]; then
+			cat
+		else
+			printf "%s\n" "${_block_flag}"
+		fi | awk -v begin_line="$_begin_line" -v end_line="$_end_line" '
 		BEGIN {
 			inside_block = "no"
 		}

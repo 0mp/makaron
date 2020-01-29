@@ -4,3 +4,4 @@ test_suite('tests')
 
 -- This specifies the test programs
 atf_test_program{name='blockinfile_compat_tests.sh'}
+atf_test_program{name='general_tests.sh'}
