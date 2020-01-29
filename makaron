@@ -113,6 +113,9 @@ main() {
 			_path_flag="$2"
 			shift 2
 			;;
+		( * )
+			err "$__EX_USAGE" "Invalid flag: $1"
+			;;
 		esac
 	done
 

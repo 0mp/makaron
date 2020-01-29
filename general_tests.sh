@@ -27,10 +27,21 @@ in_flag_with_block_body() {
 	verify
 }
 
+atf_test_case invalid_flag
+invalid_flag_head() {
+	atf_set "descr" "Test that invalid flags are handled"
+	atf_set "timeout" "1"
+}
+invalid_flag_body() {
+	atf_check -s exit:64 -e "inline:ERROR: Invalid flag: -path\n" \
+		"$cmd" -path "$file"
+}
+
 atf_init_test_cases()
 {
 	cmd="$(atf_get_srcdir)/makaron"
 
 	atf_add_test_case in_flag_no_block
 	atf_add_test_case in_flag_with_block
+	atf_add_test_case invalid_flag
 }
