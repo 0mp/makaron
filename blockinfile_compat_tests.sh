@@ -2,8 +2,9 @@
 
 set_up() {
 	name="$(atf_get ident)"
-	file="$(atf_get_srcdir)/test/${name}.actual"
-	expected="$(atf_get_srcdir)/test/${name}.expected"
+	test_dir="$(atf_get_srcdir)/test/blockinfile_compat"
+	file="${test_dir}/${name}.actual"
+	expected="${test_dir}/${name}.expected"
 }
 
 verify() {
@@ -91,9 +92,9 @@ create_path_head() { atf_set "descr" "Test the create parameter support for path
 create_path_body() {
 	set_up
 
-	actual_dir="$(atf_get_srcdir)/test/${name}.dir.actual"
+	actual_dir="${test_dir}/${name}.dir.actual"
 	file="${actual_dir}/${name}.actual"
-	expected_dir="$(atf_get_srcdir)/test/${name}.dir.expected"
+	expected_dir="${test_dir}/${name}.dir.expected"
 	expected="${expected_dir}/${name}.expected"
 
 	atf_check -o save:dir-stat.expected stat -f "%Sp %u %g" "$expected_dir"

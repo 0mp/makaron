@@ -2,7 +2,7 @@
 - name: Run blockinfile over test cases to generate expected outputs
   hosts: localhost
   vars:
-    test_path: "./test"
+    test_path: "./test/blockinfile_compat"
     suffix: ".expected"
     default_marker: "# {mark} MAKARON MANAGED BLOCK"
 
