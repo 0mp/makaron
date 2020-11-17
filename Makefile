@@ -1,3 +1,6 @@
+DESTDIR?=
+PREFIX?=	${HOME}/.local
+
 check: clean .WAIT ansible .WAIT kyua
 
 ansible: .PHONY
@@ -19,3 +22,7 @@ clean: .PHONY
 	find test/blockinfile_compat -name '*.expected' -print -delete
 	find test/blockinfile_compat -name '*~' -print -delete
 	find test/blockinfile_compat -name 'create_path' -print -delete
+
+install: .PHONY
+	@mkdir -p ${DESTDIR}${PREFIX}/bin
+	install -m 0555 makaron ${DESTDIR}${PREFIX}/bin/makaron
