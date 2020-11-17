@@ -59,7 +59,8 @@ main() {
 	local _marker_end_flag
 	local _mode_flag
 	local _owner_flag
-	local _path_flag local _state_flag
+	local _path_flag
+	local _state_flag
 	local _unsafe_writes_flag
 	local _validate_flag
 
