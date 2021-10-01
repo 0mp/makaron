@@ -1,4 +1,9 @@
 #! /usr/bin/env atf-sh
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Copyright (c) 2021 Mateusz Piotrowski <0mp@FreeBSD.org>
+#
 
 set_up() {
 	name="$(atf_get ident)"

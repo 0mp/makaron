@@ -1,3 +1,9 @@
+#
+# SPDX-License-Identifier: BSD-2-Clause
+#
+# Copyright (c) 2021 Mateusz Piotrowski <0mp@FreeBSD.org>
+#
+
 DESTDIR?=
 PREFIX?=	${HOME}/.local
 
