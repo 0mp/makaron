@@ -78,6 +78,9 @@ main() {
 	_mode_flag="$__PRESERVE"
 	_state_flag="$__STATE_PRESENT"
 
+	# The list of flags is in sync with the ansible.builtin.blockinfile
+	# module as of 2021-10-01, Ansible version 4. See the documentation:
+	# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/blockinfile_module.html
 	while [ "$#" -gt 0 ]; do
 		case $1 in
 		( --attributes | --attr )
@@ -100,6 +103,15 @@ main() {
 			_create_flag="$2"
 			shift 2
 			;;
+		(--group)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--insertafter)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--insertbefore)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
 		( --in )
 			_in_flag="$__YES"
 			shift
@@ -109,10 +121,40 @@ main() {
 			_marker_flag="$2"
 			shift 2
 			;;
+		(--markerbegin)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--markerend)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--mode)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--owner)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
 		( --path | --dest | --destfile | --name )
 			flag_requires_value "$@"
 			_path_flag="$2"
 			shift 2
+			;;
+		(--selevel)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--serole)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--seuser)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--state)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--unsafe_writes)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
+			;;
+		(--validate)
+			err "$__EX_USAGE" "Unimplemented flag: $1"
 			;;
 		( * )
 			err "$__EX_USAGE" "Invalid flag: $1"
